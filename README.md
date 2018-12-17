@@ -19,20 +19,20 @@ Input file: jobs.txt
 (actual filename is specified in line 9 to jobs_name, but should be changed to a command line argument)
 
 format of input file:
-sample_name1 number_of_input_files1
-inputfile_1-1
-inputfile_1-2
-sample_name2 number_of_input_files2
-inputfile_2-1
-inputfile_2-2
-...
+<p>sample_name1 number_of_input_files1
+<p>inputfile_1-1
+<p>inputfile_1-2
+<p>sample_name2 number_of_input_files2
+<p>inputfile_2-1
+<p>inputfile_2-2
+<p>...
 
 example:
-mRNA24hC1 2
-/mnt/gno/gnome3/DropBox/mRNA24hC1_S1_L001_R1_001.fastq.gz
-/mnt/gno/gnome3/DropBox/mRNA24hC1_S1_L001_R2_001.fastq.gz
-mRNA24hC2 2
-/mnt/gno/gnome3/DropBox/mRNA24hC2_S2_L001_R1_001.fastq.gz
-/mnt/gno/gnome3/DropBox/mRNA24hC2_S2_L001_R2_001.fastq.gz
+<p>mRNA24hC1 2
+<p>/mnt/gno/gnome3/DropBox/mRNA24hC1_S1_L001_R1_001.fastq.gz
+<p>/mnt/gno/gnome3/DropBox/mRNA24hC1_S1_L001_R2_001.fastq.gz
+<p>mRNA24hC2 2
+<p>/mnt/gno/gnome3/DropBox/mRNA24hC2_S2_L001_R1_001.fastq.gz
+<p>/mnt/gno/gnome3/DropBox/mRNA24hC2_S2_L001_R2_001.fastq.gz
 
 Output is .csv file with read count and % abundance for each sample.
