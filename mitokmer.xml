@@ -1,0 +1,83 @@
+<tool id="mitokmer_v1" name="mitokmer 1" version="1.0">
+    <description>Eukaryotic abundance prediction by mitochondrial content</description>
+    <requirements>
+      <requirement type="package" version="2.7">python</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+
+	#if $reads.reads_select == "paired"
+	#set $name = $reads.forward.name.split('.')[0].replace(' ','_')
+	#set $forward = $reads.forward
+	#set $reverse = $reads.reverse
+	#else
+	#set $name = $reads.allreads.name.split('.')[0].replace(' ','_')
+	#set $forward = $reads.allreads
+	#set $reverse = $reads.allreads
+	#end if
+        echo $name;
+        echo "-=-=-";
+	#if $forward.is_of_type('fastq.gz', 'fastqsanger.gz')
+	#set $fwd = "R1.fastq.gz"
+	#set $rev = "R2.fastq.gz"
+	#else if $forward.is_of_type('fastq', 'fastqsanger')
+	#set $fwd = "R1.fastq"
+	#set $rev = "R2.fastq"
+	#else if $forward.is_of_type('fasta.gz')
+	#set $fwd = "R1.fasta.gz"
+	#set $rev = "R2.fasta.gz"
+	#else
+	#set $fwd = "R1.fasta"
+	#set $rev = "R2.fasta"
+	#end if
+	ln -s $forward $fwd;
+	ln -s $reverse $rev;
+	#if $reads.reads_select == "single"
+	#set $rev = "none"
+	#end if
+	mkdir ./output;
+	python $__tool_directory__/kmer_read_m3.py
+	-w $__tool_directory__
+	-d ./output
+	-i $fwd $rev
+
+    ]]></command>
+    <inputs>
+
+        <conditional name="reads">
+            <param name="reads_select" type="select" label="One FASTQ dataset from your history, or two datasets from your history">
+                <option value="single">One FASTQ dataset from your history</option>
+                <option value="paired">Two FASTQ datasets from your history</option>
+            </param>
+            <when value="single">
+        	<param label="all reads" type="data" name="allreads" format="fasta,fasta.gz,fastq,fastq.gz,fastqsanger,fastqsanger.gz"/>
+            </when>
+            <when value="paired">
+                <param label="Forward reads" type="data" name="forward" format="fasta,fasta.gz,fastq,fastq.gz,fastqsanger,fastqsanger.gz" />
+                <param label="Reverse reads" type="data" name="reverse" format="fasta,fasta.gz,fastq,fastq.gz,fastqsanger,fastqsanger.gz" />
+            </when>
+        </conditional>
+
+    </inputs>
+    <outputs>
+      <data format="tabular" label="mitokmer Results" name="results" from_work_dir="output/mitokmer_result.csv"/>
+    </outputs>
+    <tests>
+        <test>
+         <param name="reads_select" value="single" />
+         <param name="allreads" value="1a.fasta" format="fasta"/>
+         <output name="output1" file="mitokmer_result.csv"/>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+  
+**Usage: mitokmer.py**
+
+    ]]></help>
+    <citations>
+       <citation type="bibtex">
+	meh
+       }</citation>
+    </citations>
+
+</tool>
