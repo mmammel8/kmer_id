@@ -3,7 +3,7 @@
 
 import re
 import sys
-import numpy as np
+#import numpy as np -- removed numpy requirement
 from subprocess import Popen, PIPE
 
 if __name__ == '__main__':
@@ -65,7 +65,7 @@ if __name__ == '__main__':
             if use == "1":
                 name_list.append(name)
                 factor_list.append(tested / hit / gensize)
-    factor_arr = np.array(factor_list)
+    #factor_arr = np.array(factor_list)
     num_targs = len(name_list)
     process = Popen([wdir + '/kmerread', '-wdir', wdir, '-f1', file1, '-f2', file2])
 
@@ -73,40 +73,49 @@ if __name__ == '__main__':
 
     #read in output files
     noid_list = []
-    read_ct = []
-    num_cols = 1
-    m = np.zeros((num_targs,num_cols))
+    num_cols = 1 #only one sample, no matrix needed
+    #m = np.zeros((num_targs,num_cols))
+    m = [0.0 for _ in range(num_targs)]
     col = 0
     data_file = open(cname, 'r')
     data = ''.join(data_file.readlines())
     data_file.close()
     lines = data.split('\n')
-    read_ct.append(0.0)
+    read_ct = 0.0
     index = 0
     for line in lines:
         if len(line) > 1:
             t_s, count, uniq = line.split(',')
             target = int(t_s)
-            read_ct[col] += float(count) 
+            read_ct += float(count) 
             if target > 0:
                 if in_use[target]: 
-                    m[index, col] = float(count)
+                    m[index] = float(count)
                     index += 1
             else:
                 noid_list.append(int(count))
 
-    b = m * factor_arr[:,None] #normalize each row by kmer coverage
-    sums = np.sum(b, axis=0)
-    b = b / sums[None,:]
-    b = b * 100.0
-    rowmax = b.max(axis=1)
+    #b = m * factor_arr[:,None] #normalize each row by kmer coverage
+    #sums = np.sum(b, axis=0)
+    #b = b / sums[None,:]
+    #b = b * 100.0
+    sum = 0.0
+    b = []
+    for i in range(num_targs):
+        b1 = m[i] * factor_list[i]
+        sum += b1
+        b.append(b1)
+    sum /= 100.0
+    for i in range(num_targs):
+        b[i] /=sum
+    #rowmax = b.max(axis=1)
 
     out_file = open(oname, 'w')
     output = "taxid,reads,abundance\n"
     out_file.write(output)
     output = "total,"
-    for i in range(num_cols):
-        output += str(read_ct[i]) + ",,"
+    #for i in range(num_cols):
+    output += str(read_ct) + ",,"
     output += "\n"
     out_file.write(output)
     output = "no_id,"
@@ -116,10 +125,10 @@ if __name__ == '__main__':
     out_file.write(output)
     for i in range(num_targs):
         #l = order_row[i]
-        if rowmax[i] > 0.000: #only output non-zero results
+        if m[i] > 0: #only output non-zero results
             output = name_list[i]
             for j in range(num_cols):
-                output += ',' + "{0:.0f}".format(m[i,j]) + ',' + "{0:.3f}".format(b[i,j])
+                output += ',' + "{0:.0f}".format(m[i]) + ',' + "{0:.3f}".format(b[i])
             output += "\n"
             out_file.write(output)
     out_file.close()
