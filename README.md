@@ -1,23 +1,21 @@
 # kmer_id
-Mitichondrial read identification by kmer database for Galaxy server
+metagenomic read identification by kmer database
 
-File kmer_read_m3.cpp
+source file newkmer_10nx.cpp
 uses gzip library, compile with:
-g++ -O3 -std=c++0x kmer_read_m3.cpp -o kmerread -lz
+g++ -O3 newkmer_10nx.cpp -o nk10 -lz
 
-database files needed in same directory:
-(can create with kmer_build, but not described here yet)
-mitochondria_data.txt
-mitochondria_refkey.txt
-mitochondria_count.txt
-mitochondria_tree.txt
-mitochondria_probes.txt.gz
-1a.fasta (test input)
+database files needed in bact10 subdirectory:
+bData10.txt
+btree10.txt
+refkey10.txt
+probes10.txt.gz - too large (1.5 Gb) for github, email me for box link.
 
-File kmer_read_m3.py  
-(Python 2.7)
-Run with:
-python kmer_read_m3.py -w [working directory] -d [output directory] -i [input filename1] [input filename2]
+run (uses 25 Gb RAM) with
+./nk10 /path-to-fastq-files/
+Input files are two paired trimmed fastq files (_R1_tr.fastq.gz and _R2_tr.fastq.gz - names can be changed in source)
 
-Input files can be two paired files (.fastq, .fastq.gz, .fasta, .fasta.gz) or a single file with none as filename2
+Python 3 program readbatch_10.py  
+to collect results files and generate report
+Change dir1 to location of result files
 Output is .csv file with read count and % abundance for each species.
